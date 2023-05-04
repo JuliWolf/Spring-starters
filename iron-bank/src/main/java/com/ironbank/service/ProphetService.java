@@ -1,4 +1,4 @@
-package com.starter.braavos.braavosstarter.service;
+package com.ironbank.service;
 
 public interface ProphetService {
   boolean willSurvive(String name);

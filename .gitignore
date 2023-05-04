@@ -3,3 +3,7 @@
 /braavos-starter/.mvn
 /braavos-starter/target
 /.idea/
+/braavos-starter/.gradle/
+/iron-bank/.gradle/
+/iron-bank/iron-starter/build/
+/iron-bank/build/

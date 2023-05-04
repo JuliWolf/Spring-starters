@@ -1,4 +1,4 @@
-package com.starter.braavos.braavosstarter;
+package com.ironbank;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

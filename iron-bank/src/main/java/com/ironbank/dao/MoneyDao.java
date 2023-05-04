@@ -1,6 +1,6 @@
-package com.starter.braavos.braavosstarter.dao;
+package com.ironbank.dao;
 
-import com.starter.braavos.braavosstarter.model.Bank;
+import com.ironbank.model.Bank;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MoneyDao extends JpaRepository<Bank, String> {

@@ -1,0 +1,19 @@
+spring:
+  application.name: braavos-bank
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/java-web
+    username: postgres
+    password: 123321
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  ironbank:
+    те-кто-возвращают-долги:
+      - Ланистеры
+debug: false

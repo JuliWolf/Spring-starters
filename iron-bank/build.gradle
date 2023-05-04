@@ -1,0 +1,72 @@
+buildscript {
+  ext {
+    springBootVersion = '1.5.7.RELEASE'
+    springCloudVersion = 'Dalston.SR2'
+  }
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+  }
+}
+
+allprojects {
+  apply plugin: 'java'
+  apply plugin: 'io.spring.dependency-management'
+
+  sourceCompatibility = 1.8
+
+  repositories {
+    jcenter()
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+      mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+    }
+    dependencies {
+      dependency 'org.projectlombok:lombok:1.16.18' // use newest lombok version
+    }
+  }
+
+  dependencies {
+    compileOnly 'org.projectlombok:lombok'
+  }
+}
+
+configure(rootProject) {
+  apply plugin: 'org.springframework.boot'
+
+  dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+//    compile 'org.springframework.cloud:spring-cloud-starter'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-data-rest'
+    compile 'org.springframework.data:spring-data-rest-hal-browser'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+
+    compile project(':iron-starter')
+    runtime 'org.postgresql:postgresql'
+
+    compileOnly 'org.projectlombok:lombok'
+    compile 'org.projectlombok:lombok'
+    compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+  }
+}
+
+subprojects {
+  dependencies {
+    compile 'org.springframework.boot:spring-boot-starter'
+    compileOnly 'org.springframework.boot:spring-boot-configuration-processor'
+  }
+}
+
+springBoot {
+  executable = true
+}
