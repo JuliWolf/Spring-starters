@@ -1,17 +1,23 @@
-package com.starter.braavos.braavosstarter.service;
+package com.ironbank.service;
 
-import com.starter.braavos.braavosstarter.dao.MoneyDao;
-import com.starter.braavos.braavosstarter.model.Bank;
-import lombok.RequiredArgsConstructor;
+import com.ironbank.dao.MoneyDao;
+import com.ironbank.model.Bank;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class TransferMoneyProphecyBackend implements TransferMoneyService {
   private final MoneyDao moneyDao;
   private final ProphetService prophet;
+
+  @Autowired
+  public TransferMoneyProphecyBackend(MoneyDao moneyDao, ProphetService prophet) {
+    this.moneyDao = moneyDao;
+    this.prophet = prophet;
+  }
 
   @Override
   public long transfer(String addresseeName, long amount) {
