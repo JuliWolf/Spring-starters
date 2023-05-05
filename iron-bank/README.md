@@ -138,3 +138,118 @@ public class OnRavenCondition extends AllNestedConditions {
   public static class C {}
 }
 ```
+
+## Создавать бин в зависимости от значения Profile
+```
+public interface ProfileConstants {
+  String ЗИМА_БЛИЗКО = "зимаБлизко";
+  String ЗИМА_ТУТА = "зимаТута";
+}
+```
+
+```
+@Service
+@Profile(ProfileConstants.ЗИМА_ТУТА)
+public class WhiteListProphetService implements ProphetService {
+  private final ProphetProperties prophetProperties;
+
+  @Autowired
+  public WhiteListProphetService(ProphetProperties prophetProperties) {
+    this.prophetProperties = prophetProperties;
+  }
+
+  @Override
+  public boolean willSurvive(String name) {
+    return prophetProperties.getТеКтоВозвращаюДолги().contains(name);
+  }
+}
+```
+```
+@Service
+@Profile(ProfileConstants.ЗИМА_БЛИЗКО)
+public class NameBasedProphetService implements ProphetService {
+  @Override
+  public boolean willSurvive(String name) {
+    return !name.contains("Stark") && ThreadLocalRandom.current().nextBoolean();
+  }
+}
+```
+
+### Проверка значения профиля на ранней стадии инициализации приложения
+1. Чтобы сборка приложения выкидывала исключение на ранней стадии сборки, если профиль не указан</br></br>
+
+- В стартере создаем новый класс для проверки профиля
+```
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+
+public class ProfileCheckApplicationContextInitializer implements ApplicationContextInitializer {
+  @Override
+  public void initialize(ConfigurableApplicationContext applicationContext) {
+    if (applicationContext.getEnvironment().getActiveProfiles().length == 0) {
+      throw new RuntimeException("без профиля нельзя!");
+    }
+  }
+}
+```
+в `ConfigurableApplicationContext` мы получим контекст приложение, в который придут все указанные значения окружения</br></br>
+
+- В файле `spring.factories` указываем `ApplicationContextInitializer`
+```
+org.springframework.context.ApplicationContextInitializer=com.ironstarter.ProfileCheckApplicationContextInitializer
+```
+`ApplicationContextInitializer` - отрабатывает в тот момент когда контекст уже создан, но в нем нет ничего, кроме environment</br>
+`Spring boot application`  дальнейшем наполняет `environment` разными значениями</br></br>
+
+2. Задать дефолтное значение профиля</br></br>
+
+- Создать класс, который имлементит `EnvironmentPostProcessor` </br>
+`EnvironmentPostProcessor` выполняется еще до `ApplicationContextInitializer`
+```
+public class ProfileDetectorEPP implements EnvironmentPostProcessor {
+  @Override
+  public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+    String[] activeProfiles = environment.getActiveProfiles();
+
+    if (activeProfiles.length == 0 && getTemperature() < -272) {
+      environment.setActiveProfiles("зимаТута");
+    } else {
+      environment.setActiveProfiles("зимаБлизко");
+    }
+  }
+
+  private int getTemperature() {
+    return -300;
+  }
+}
+```
+- Регистрируем `EnvironmentPostProcessor` в файле `spring.factories`
+```
+org.springframework.boot.env.EnvironmentPostProcessor=com.ironstarter.ProfileDetectorEPP
+```
+`ConfigFileApplicationListener`
++ Слушает
+  - ApplicationPreparedEvent
+  - ApplicationEnvironmentPreparedEvent
+
++ Загружает
+  - application.yml
+  - application.properties
+  - env vars
+  - cmd args
+
+Говорит `SpringFactoriesLoader` получить все `EnvironmentPostProcessors`</br>
+Сортирует и формирует список `EnvironmentPostProcessors` + добавляет себя в данный лист</br>
+У всех `EnvironmentPostProcessors` запускает `postProcessEnvironment`</br>
+
+## События spring (основные)
+- ContextStartedEvent (boot)
+- ContextStoppedEvent (boot)
+- ContextClosedEvent (boot)
+- ContextRefreshedEvent (boot)
+- ApplicationStartingEvent (spring) *
+- ApplicationEnvironmentPreparedEvent (spring) *
+- ApplicationPreparedEvent(spring) *
+- EmbeddedServletContainerInitializedEvent (spring)
+- ApplicationReadyEvent (spring)
+- ApplicationFailedEvent (spring)
