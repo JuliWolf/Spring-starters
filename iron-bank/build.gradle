@@ -61,6 +61,8 @@ configure(rootProject) {
 }
 
 subprojects {
+  println "I'm ${project.name}"
+
   dependencies {
     compile 'org.springframework.boot:spring-boot-starter'
     compileOnly 'org.springframework.boot:spring-boot-configuration-processor'

@@ -243,8 +243,8 @@ org.springframework.boot.env.EnvironmentPostProcessor=com.ironstarter.ProfileDet
 У всех `EnvironmentPostProcessors` запускает `postProcessEnvironment`</br>
 
 ## События spring (основные)
-- ContextStartedEvent (boot)
-- ContextStoppedEvent (boot)
+- ContextStartedEvent (boot) - только если вызвать ctx.start();
+- ContextStoppedEvent (boot) - только если вызвать ctx.stop();
 - ContextClosedEvent (boot)
 - ContextRefreshedEvent (boot)
 - ApplicationStartingEvent (spring) *
